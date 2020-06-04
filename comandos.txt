@@ -1,0 +1,23 @@
+instalando o cli do VUE no computador
+é o comand line do VUE para usar no terminal
+#npm i -g @vue/cli
+
+criar um projeto
+#vue create 'nome do projeto' 'most-used-words'
+ele vai perguntar qual o tipo de instalação que eu quero
+eu marquei a opção padrão 'default'
+ele perguntou qual o metodo de instalação do projeto, eu coloquei
+aqui NPM, maso YARN não tem muita diferença não
+
+entrei no projeto e enviei o seguinte comando para adicionar uma biblioteca
+cd 'nome do projeto' 'most-used-words'
+#vue add vuetify
+ele fará umas perguntas e eu selecionei as opções padrões
+a biblioteca acima tem um monte de coisas pra eu usar dentro do VUE
+
+adiconar a biblioteca do electron no projeto
+#vue add electron-builder
+Na aula ele usou o electron 5, contudo a aula é antiga então eu estou usando um electron mais atual, no caso hoje estou usando o 9
+
+para executar o projeto
+#npm run electron:serve
