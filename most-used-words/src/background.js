@@ -3,8 +3,11 @@
 import { app, protocol, BrowserWindow } from 'electron'
 import {
   createProtocol,
-  /* installVueDevtools */
+  installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
+// FAZENDO A CHAMADA DO ARQUIVO DO BACKEND
+import './backend/index'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -12,33 +15,30 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 let win
 
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }])
+protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
 
-function createWindow() {
+function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({
-    width: 800, height: 600, webPreferences: {
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION
-    }
-  })
+  win = new BrowserWindow({ width: 800, height: 600, webPreferences: {
+    nodeIntegration: true
+  } })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+
+    // PARA QUE A APLICAÇÃO NÃO ABRA COM O DEVTOOLS DO CHROME EU PRECISO SEMPRE COMENTAR A LINHA ABAIXO.
     //if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
-
     createProtocol('app')
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
 
   win.webContents.on('did-finish-load', () => {
-    const {title, version} = require('../package.json')
+    const { title, version } = require('../package.json')
     win.setTitle(`${title} :: ${version}`)
-    console.log('terminou')
+    console.log( 'Aplicação Carregada XD' )
   })
 
   win.on('closed', () => {
@@ -69,16 +69,11 @@ app.on('activate', () => {
 app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
-    // Devtools extensions are broken in Electron 6.0.0 and greater
-    // See https://github.com/nklayman/vue-cli-plugin-electron-builder/issues/378 for more info
-    // Electron will not launch with Devtools extensions installed on Windows 10 with dark mode
-    // If you are not using Windows 10 dark mode, you may uncomment these lines
-    // In addition, if the linked issue is closed, you can upgrade electron and uncomment these lines
-    // try {
-    //   await installVueDevtools()
-    // } catch (e) {
-    //   console.error('Vue Devtools failed to install:', e.toString())
-    // }
+    try {
+  await installVueDevtools()
+} catch (e) {
+  console.error('Vue Devtools failed to install:', e.toString())
+}
 
   }
   createWindow()

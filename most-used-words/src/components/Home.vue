@@ -1,29 +1,58 @@
 <template>
-  <!-- fluid é para o componente ocupar a tela inteira !-->
-  <v-container fluid>
-    <div class="pills">
-      <Pill v-for="word in groupedWords" v-bind:key="word.name"
-      :name="word.name" :amount="word.amount"/>
-    </div>
-  </v-container>
+    <v-container fluid>
+        <v-form>
+            <v-file-input 
+                label="Selecione as legendas"
+                prepend-icon="mdi-message-text"
+                append-outer-icon="mdi-send"
+                outlined
+                multiple 
+                chips 
+                v-model="files" 
+                @click:append-outer="processSubtitles"/>
+
+        </v-form>
+
+        <div class="pills">
+            <Pill v-for="word in groupedWords" :key="word.name"  :name="word.name" :amount="word.amount" />
+        </div>
+    </v-container>
 </template>
 
 <script>
-import Pill from "./Pill";
+import { ipcRenderer } from 'electron'
+import Pill from './Pill'
 
 export default {
-  components: { Pill },
-  data: function() {
-    return {
-      groupedWords: [
-        { name: "i", amount: 1234 },
-        { name: "you", amount: 900 },
-        { name: "he", amount: 853 }
-      ]
-    };
-  }
-};
+    components: { Pill },
+    data: function(){
+        
+        // DEFININDO OS COMPONENTES QUE IREI MOSTRAR NA TELA
+        return {
+        
+        files: [],
+        groupedWords: []
+        }
+    },
+    // CRIANDO O MÉTODO PARA PROCESSAR AS LEGENDAS
+    methods: {
+        processSubtitles(){
+            //console.log('iniciandoTrabalho')
+            const paths = this.files.map(f => f.path)
+            ipcRenderer.send('processing', paths)
+            ipcRenderer.on('processing', (event, resp) => {
+                this.groupedWords = resp
+            })
+        }
+    }
+
+
+}
 </script>
 
 <style>
+    .pills {
+        display: flex;
+        flex-wrap: wrap;
+    }
 </style>
